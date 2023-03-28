@@ -1,5 +1,15 @@
 function HomePage() {
-  return <div>Welcome to Next.js!</div>
+  const handleLoginClick = () => {
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID}`
+  }
+
+  return (
+    <>
+      <button onClick={handleLoginClick}>
+        登入 GitHub
+      </button>
+    </>
+  )
 }
 
 export default HomePage
