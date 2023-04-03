@@ -1,13 +1,11 @@
 import axios from "axios"
 import { useEffect } from "react"
-import { useRouter } from 'next/router'
+import router from 'next/router'
 
 export default function Load() {
-  const router = useRouter()
   useEffect(() => {
     const url = window.location.href
     const code = url.split("?code=")[1]
-
     axios
       .get(`/api/getAccessToken?code=${code}`)
       .then(res => {
@@ -15,8 +13,5 @@ export default function Load() {
         router.push('/panel')
       })
       .catch(err => console.log(err))
-
-
-  })
-  return
+  }, [])
 }
