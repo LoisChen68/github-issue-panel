@@ -1,0 +1,77 @@
+%label {
+  padding: 1px 15px 1px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  height: 30px;
+  background-color: #E5E7EB;
+  border-radius: 5px;
+  font-size: 15px;
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  width: 100%;
+  height: 160px;
+  border: 1px solid #EEF0F3;
+  border-radius: 10px;
+  background-color: #FFF;
+  box-shadow: 1px 1px 5px 1px rgba(235, 235, 235, 10);
+}
+
+.label-dot-icon-group {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dot-icon {
+  color: #818792;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
+  margin: 20px;
+  font-size: 15px;
+}
+
+.title {
+  font-weight: bolder;
+}
+
+.label {
+  @extend %label;
+
+  &-progress {
+    @extend %label;
+    background-color: #EF4444;
+    color: #FFF;
+  }
+
+  &-done {
+    @extend %label;
+    background-color: #12B981;
+    color: #FFF;
+  }
+}
+
+.avatar {
+  border-radius: 100%;
+}
+
+.avatar-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.body {
+  margin: 10px 0px 10px 10px;
+}

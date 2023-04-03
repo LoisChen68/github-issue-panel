@@ -11,14 +11,16 @@
   }
 
   &-container {
+    display: flex;
+    justify-content: space-between;
     margin: 0 auto;
-    width: 90%;
+    width: 80%;
   }
 }
 
 .container {
   position: relative;
   top: 100%;
-  width: 90%;
+  width: 80%;
   margin: 0px auto;
 }
