@@ -13,6 +13,7 @@ interface IssueData {
   labels: Label[]
   repository: Repo
   number: number
+  created_at: string
 }
 
 interface User {
@@ -52,6 +53,7 @@ export default function Panel() {
   const [targetLabel, setTargetLabel] = useState('')
   const [searchIssues, setSearchIssues] = useState<Array<IssueData>>([])
   const [filterIssues, setFilterIssues] = useState<Array<IssueData>>([])
+  const [sort, setSort] = useState('Newest')
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -123,6 +125,7 @@ export default function Panel() {
     setSearchText('')
     if (label === 'All') {
       setTargetLabel('')
+      setFilterIssues([])
       setFilter(false)
     } else if (label !== 'All') {
       const data = issuesData.filter(issue => issue.labels.find(item => item.name === label))
@@ -132,20 +135,47 @@ export default function Panel() {
     }
   }
 
+  const handleSortClick = () => {
+    if (sort === 'Oldest') {
+      setSort('Newest')
+      const sortIssues = issuesData.sort((a: IssueData, b: IssueData) => {
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      })
+      const sortFilterIssue = filterIssues.sort((a: IssueData, b: IssueData) => {
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      })
+      setIssuesData(sortIssues)
+      setFilterIssues(sortFilterIssue)
+    } else if (sort === 'Newest') {
+      setSort('Oldest')
+      const sortIssues = issuesData.sort((a: IssueData, b: IssueData) => {
+        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      })
+      const sortFilterIssue = filterIssues.sort((a: IssueData, b: IssueData) => {
+        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      })
+      setIssuesData(sortIssues)
+      setFilterIssues(sortFilterIssue)
+    }
+  }
+
   return (
     <>
       <div className={style['user-name-search-group']}>
         <h1 className={style['user-name']}>{userData.login}</h1>
         <Search value={searchText} onChange={handleSearchChange} />
-        <ul className={style.labels}>
-          {labelList.map(label =>
-            <li
-              key={label.id}
-              onClick={() => handleLabelTagClick(label.name)}
-              className={targetLabel === label.name ? style['label-on-focus'] : ''}
-            >{`${label.name}`}</li>
-          )}
-        </ul>
+        <div className={style['label-tags-sort-group']}>
+          <ul className={style.labels}>
+            {labelList.map(label =>
+              <li
+                key={label.id}
+                onClick={() => handleLabelTagClick(label.name)}
+                className={targetLabel === label.name ? style['label-on-focus'] : ''}
+              >{`${label.name}`}</li>
+            )}
+          </ul>
+          <span onClick={handleSortClick}>{sort}</span>
+        </div>
       </div>
       {searchText.length !== 0 && searchIssues.length === 0
         ? <p className={style['no-issues-text']}>查無結果</p>
