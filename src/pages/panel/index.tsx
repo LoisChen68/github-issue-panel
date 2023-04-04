@@ -10,6 +10,8 @@ interface IssueData {
   body: string
   user: User
   labels: Label[]
+  repository: Repo
+  number: number
 }
 
 interface User {
@@ -21,14 +23,26 @@ interface Label {
   name: string
 }
 
+interface Repo {
+  name: string
+  owner: Owner
+}
+
+interface Owner {
+  login: string
+}
+
+const githubUrl = 'https://api.github.com'
+
 export default function Panel() {
   const [userData, setUserData] = useState({ login: '' })
   const [issuesData, setIssuesData] = useState<Array<IssueData>>([])
   const [isLoading, setIsLoading] = useState(true)
+
   useEffect(() => {
     const token = localStorage.getItem('token')
     axios
-      .get(`https://api.github.com/user`, {
+      .get(`${githubUrl}/user`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -39,7 +53,7 @@ export default function Panel() {
         router.push('/')
       })
 
-    axios.get(`https://api.github.com/issues`, {
+    axios.get(`${githubUrl}/issues`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -50,6 +64,8 @@ export default function Panel() {
       })
       .catch(err => console.log(err))
   }, [])
+  console.log(issuesData)
+
   return (
     <>
       <h1 className={style['user-name']}>{userData.login}</h1>
@@ -63,6 +79,9 @@ export default function Panel() {
                 issue.labels.find(item => item.name === 'In Progress') && 'In Progress' ||
                 issue.labels.find(item => item.name === 'Open') && 'Open' || 'Open'
               }
+              owner={issue.repository.owner.login}
+              repo={issue.repository.name}
+              issue_number={issue.number}
               title={issue.title}
               body={issue.body}
               imgUrl={issue.user.avatar_url}
@@ -70,7 +89,6 @@ export default function Panel() {
           </div>
         ))
       }
-
     </>
   )
 }

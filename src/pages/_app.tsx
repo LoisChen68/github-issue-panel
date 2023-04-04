@@ -5,12 +5,13 @@ import type { AppProps } from 'next/app'
 import router from 'next/router'
 
 export default function App({ Component, pageProps }: AppProps) {
+
   function handleLogoutClick() {
     localStorage.removeItem('token')
     router.push('/')
   }
   return (
-    <div className={style.wrapper}>
+    <div className={style.wrapper} >
       <div className={style['nav-bar-wrapper']}>
         <div className={style['nav-bar-container']}>
           <span>Navbar</span>

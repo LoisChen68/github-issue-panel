@@ -29,6 +29,12 @@
   justify-content: space-between;
 }
 
+.label-menu-group {
+  position: relative;
+  min-width: 150px;
+  display: flex;
+}
+
 .dot-icon {
   color: #818792;
 }
@@ -47,9 +53,12 @@
 }
 
 .label {
-  @extend %label;
 
-  &-progress {
+  &-open {
+    @extend %label;
+  }
+
+  &-in-progress {
     @extend %label;
     background-color: #EF4444;
     color: #FFF;
