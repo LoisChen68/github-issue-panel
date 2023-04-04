@@ -33,15 +33,25 @@ interface Owner {
   login: string
 }
 
+const labelList = [
+  { id: 0, name: 'All' },
+  { id: 1, name: 'Open' },
+  { id: 2, name: 'In Progress' },
+  { id: 3, name: 'Done' }
+]
+
 const githubUrl = 'https://api.github.com'
 
 export default function Panel() {
   const [userData, setUserData] = useState({ login: '' })
   const [issuesData, setIssuesData] = useState<Array<IssueData>>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [filter, setFilter] = useState(false)
   const [searchText, setSearchText] = useState<string>('')
   const [disPlaySearchText, setDisPlaySearchText] = useState('')
+  const [targetLabel, setTargetLabel] = useState('')
   const [searchIssues, setSearchIssues] = useState<Array<IssueData>>([])
+  const [filterIssues, setFilterIssues] = useState<Array<IssueData>>([])
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -109,15 +119,37 @@ export default function Panel() {
     }
   }, [disPlaySearchText, userData.login])
 
+  const handleLabelTagClick = (label: string) => {
+    setSearchText('')
+    if (label === 'All') {
+      setTargetLabel('')
+      setFilter(false)
+    } else if (label !== 'All') {
+      const data = issuesData.filter(issue => issue.labels.find(item => item.name === label))
+      setFilter(true)
+      setTargetLabel(label)
+      setFilterIssues(data)
+    }
+  }
+
   return (
     <>
       <div className={style['user-name-search-group']}>
         <h1 className={style['user-name']}>{userData.login}</h1>
         <Search value={searchText} onChange={handleSearchChange} />
+        <ul className={style.labels}>
+          {labelList.map(label =>
+            <li
+              key={label.id}
+              onClick={() => handleLabelTagClick(label.name)}
+              className={targetLabel === label.name ? style['label-on-focus'] : ''}
+            >{`${label.name}`}</li>
+          )}
+        </ul>
       </div>
-      {searchText.length !== 0 && searchIssues.length === 0 && <p>查無結果</p>}
-      {searchText.length !== 0
-        ? searchIssues.map(issue =>
+      {searchText.length !== 0 && searchIssues.length === 0
+        ? <p className={style['no-issues-text']}>查無結果</p>
+        : searchIssues.map(issue =>
           <div key={issue.id}>
             <Card
               label={
@@ -133,26 +165,47 @@ export default function Panel() {
               imgUrl={issue.user.avatar_url}
             />
           </div>
+        )}
+      {filter && filterIssues.length === 0
+        ? <p className={style['no-issues-text']}>查無結果</p>
+        : filterIssues.map(issue =>
+          <div key={issue.id}>
+            <Card
+              label={
+                issue.labels.find(item => item.name === 'Done') && 'Done' ||
+                issue.labels.find(item => item.name === 'In Progress') && 'In Progress' ||
+                issue.labels.find(item => item.name === 'Open') && 'Open' || 'Open'
+              }
+              owner={issue.repository.owner.login}
+              repo={issue.repository.name}
+              issue_number={issue.number}
+              title={issue.title}
+              body={issue.body}
+              imgUrl={issue.user.avatar_url}
+            />
+          </div>
         )
-        : issuesData.length === 0 && !isLoading
-          ? <p>這裡風平浪靜! 目前沒有 Issue</p>
-          : issuesData.map(issue => (
-            <div key={issue.id}>
-              <Card
-                label={
-                  issue.labels.find(item => item.name === 'Done') && 'Done' ||
-                  issue.labels.find(item => item.name === 'In Progress') && 'In Progress' ||
-                  issue.labels.find(item => item.name === 'Open') && 'Open' || 'Open'
-                }
-                owner={issue.repository.owner.login}
-                repo={issue.repository.name}
-                issue_number={issue.number}
-                title={issue.title}
-                body={issue.body}
-                imgUrl={issue.user.avatar_url}
-              />
-            </div>
-          ))
+      }
+      {issuesData.length === 0 && !isLoading && !filter && searchText.length === 0
+        ? <p className={style['no-issues-text']}>這裡風平浪靜! 目前沒有 Issue</p>
+        : !isLoading && !filter && searchText.length === 0 &&
+        issuesData.map(issue => (
+          <div key={issue.id}>
+            <Card
+              label={
+                issue.labels.find(item => item.name === 'Done') && 'Done' ||
+                issue.labels.find(item => item.name === 'In Progress') && 'In Progress' ||
+                issue.labels.find(item => item.name === 'Open') && 'Open' || 'Open'
+              }
+              owner={issue.repository.owner.login}
+              repo={issue.repository.name}
+              issue_number={issue.number}
+              title={issue.title}
+              body={issue.body}
+              imgUrl={issue.user.avatar_url}
+            />
+          </div>
+        ))
       }
     </>
   )
