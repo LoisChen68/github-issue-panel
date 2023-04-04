@@ -4,6 +4,7 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import router from "next/router"
 import Search from "@/components/Search/Search"
+import { useModalState } from "@/contexts/ModalContext"
 
 interface IssueData {
   id: number
@@ -54,6 +55,7 @@ export default function Panel() {
   const [searchIssues, setSearchIssues] = useState<Array<IssueData>>([])
   const [filterIssues, setFilterIssues] = useState<Array<IssueData>>([])
   const [sort, setSort] = useState('Newest')
+  const modalState = useModalState()
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -159,8 +161,14 @@ export default function Panel() {
     }
   }
 
+  const handleBodyClick = () => {
+    modalState?.modalState !== ''
+      ? modalState?.handleSetModal('')
+      : modalState?.modalState
+  }
+
   return (
-    <>
+    <div onClick={handleBodyClick}>
       <div className={style['user-name-search-group']}>
         <h1 className={style['user-name']}>{userData.login}</h1>
         <Search value={searchText} onChange={handleSearchChange} />
@@ -237,6 +245,6 @@ export default function Panel() {
           </div>
         ))
       }
-    </>
+    </div>
   )
 }

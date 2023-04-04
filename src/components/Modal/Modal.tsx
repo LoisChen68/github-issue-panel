@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { IoMdClose } from 'react-icons/io'
 import style from './Modal.module.scss'
 import axios from 'axios'
+import { useModalState } from '@/contexts/ModalContext'
 
 interface ModalProps {
   owner: string
@@ -18,6 +19,7 @@ export default function Modal({ onCloseClick, owner, repo, issue_number, title, 
   const token = localStorage.getItem('token')
   const [titleText, setTitleText] = useState(title)
   const [bodyText, setBodyText] = useState(body)
+  const modalState = useModalState()
 
   const handleSaveClick = () => {
     try {
@@ -33,7 +35,7 @@ export default function Modal({ onCloseClick, owner, repo, issue_number, title, 
     catch (e) {
       console.log(e)
     }
-    onCloseClick
+    modalState?.handleSetModal('')
   }
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

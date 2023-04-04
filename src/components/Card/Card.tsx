@@ -5,6 +5,7 @@ import { BiDotsVertical } from 'react-icons/bi'
 import style from './Card.module.scss'
 import Menu from '../Menu/Menu'
 import Modal from '../Modal/Modal'
+import { useModalState } from '@/contexts/ModalContext'
 
 interface CardProps {
   label: string
@@ -32,9 +33,9 @@ const githubUrl = 'https://api.github.com'
 export default function Card({ owner, repo, issue_number, label, title, body, imgUrl }: CardProps) {
   const [labelMenu, setLabelMenu] = useState(false)
   const [dotMenu, setDotMenu] = useState(false)
-  const [editModal, setEditModal] = useState(false)
   const [changeLabel, setChangeLabel] = useState<string>()
   const token = localStorage.getItem('token')
+  const modalState = useModalState()
 
   const handleLabelClick = () => {
     !labelMenu ? setLabelMenu(true) : setLabelMenu(false)
@@ -77,13 +78,13 @@ export default function Card({ owner, repo, issue_number, label, title, body, im
       }
     }
     if (feature === 'Edit') {
-      setEditModal(true)
+      modalState?.handleSetModal('edit')
     }
     setDotMenu(false)
   }
 
   const handleCloseClick = () => {
-    setEditModal(false)
+    modalState?.handleSetModal('')
   }
 
   return (
@@ -114,7 +115,7 @@ export default function Card({ owner, repo, issue_number, label, title, body, im
         </div>
         <p className={style.body}>{body}</p>
       </div>
-      {editModal &&
+      {modalState?.modalState === 'edit' &&
         <Modal
           owner={owner}
           repo={repo}

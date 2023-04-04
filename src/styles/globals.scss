@@ -6,15 +6,12 @@ body {
   background-color: #F8FAFC;
 }
 
-textarea {
-  resize: none;
-
-  &:focus {
-    outline: 0;
-  }
-}
-
+textarea,
 input {
+  resize: none;
+  border: 1px solid #b9b9b9;
+  border-radius: 5px;
+
   &:focus {
     outline: 0;
   }
