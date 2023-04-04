@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { BiDotsVertical } from 'react-icons/bi'
 import style from './Card.module.scss'
 import Menu from '../Menu/Menu'
+import Modal from '../Modal/Modal'
 
 interface CardProps {
   label: string
@@ -21,10 +22,17 @@ const labelList = [
   { id: 3, name: 'Done' }
 ]
 
+const featureList = [
+  { id: 1, name: 'Edit' },
+  { id: 2, name: 'Delete' }
+]
+
 const githubUrl = 'https://api.github.com'
 
 export default function Card({ owner, repo, issue_number, label, title, body, imgUrl }: CardProps) {
   const [labelMenu, setLabelMenu] = useState(false)
+  const [dotMenu, setDotMenu] = useState(false)
+  const [editModal, setEditModal] = useState(false)
   const [changeLabel, setChangeLabel] = useState<string>()
   const token = localStorage.getItem('token')
 
@@ -32,7 +40,7 @@ export default function Card({ owner, repo, issue_number, label, title, body, im
     !labelMenu ? setLabelMenu(true) : setLabelMenu(false)
   }
 
-  const handleMenuItemClick = (label: string) => {
+  const handleLabelMenuItemClick = (label: string) => {
     try {
       axios.patch(`${githubUrl}/repos/${owner}/${repo}/issues/${issue_number}`, {
         labels: [`${label}`]
@@ -49,6 +57,35 @@ export default function Card({ owner, repo, issue_number, label, title, body, im
     }
   }
 
+  const handleDotClick = () => {
+    !dotMenu ? setDotMenu(true) : setDotMenu(false)
+  }
+
+  const handleDotMenuItemClick = (feature: string) => {
+    if (feature === 'Delete') {
+      try {
+        axios.patch(`${githubUrl}/repos/${owner}/${repo}/issues/${issue_number}`, {
+          state: 'closed'
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+      }
+      catch (e) {
+        console.log(e)
+      }
+    }
+    if (feature === 'Edit') {
+      setEditModal(true)
+    }
+    setDotMenu(false)
+  }
+
+  const handleCloseClick = () => {
+    setEditModal(false)
+  }
+
   return (
     <div className={style.wrapper}>
       <div className={style.container}>
@@ -62,17 +99,29 @@ export default function Card({ owner, repo, issue_number, label, title, body, im
                 {label}
               </div>
             }
-            {labelMenu && <Menu menuList={labelList} onMenuItemClick={handleMenuItemClick} />}
+            {labelMenu && <Menu menuName='label' menuList={labelList} onMenuItemClick={handleLabelMenuItemClick} />}
           </div>
-          <div className={style['dot-icon']}><BiDotsVertical /></div>
+          <div className={style['dot-menu-group']}>
+            <div className={style['dot-icon']} onClick={handleDotClick}>
+              <BiDotsVertical />
+            </div>
+            {dotMenu && <Menu menuName='feature' menuList={featureList} onMenuItemClick={handleDotMenuItemClick} />}
+          </div>
         </div>
-
         <div className={style['avatar-title-group']}>
           <Image src={imgUrl} alt="avatar" width={30} height={30} className={style.avatar} />
           <p className={style.title}>{title}</p>
         </div>
         <p className={style.body}>{body}</p>
       </div>
+      {editModal &&
+        <Modal
+          owner={owner}
+          repo={repo}
+          issue_number={issue_number}
+          title={title}
+          body={body}
+          onCloseClick={handleCloseClick} />}
     </div>
   )
 }

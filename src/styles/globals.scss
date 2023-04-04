@@ -5,3 +5,17 @@ body {
   font-family: 'Noto Sans TC', 'Nunito Sans', sans-serif;
   background-color: #F8FAFC;
 }
+
+textarea {
+  resize: none;
+
+  &:focus {
+    outline: 0;
+  }
+}
+
+input {
+  &:focus {
+    outline: 0;
+  }
+}
