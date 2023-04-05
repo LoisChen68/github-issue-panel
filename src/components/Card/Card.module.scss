@@ -6,7 +6,7 @@
   justify-content: center;
   width: fit-content;
   height: 30px;
-  background-color: #E5E7EB;
+  background-color: #e5e7eb;
   border-radius: 5px;
   font-size: 15px;
 }
@@ -17,9 +17,9 @@
   margin-top: 20px;
   width: 100%;
   min-height: 160px;
-  border: 1px solid #EEF0F3;
+  border: 1px solid #eef0f3;
   border-radius: 10px;
-  background-color: #FFF;
+  background-color: #fff;
   box-shadow: 1px 1px 5px 1px rgba(235, 235, 235, 10);
 }
 
@@ -58,7 +58,6 @@
 }
 
 .label {
-
   &-open,
   &-no-label {
     @extend %label;
@@ -66,14 +65,14 @@
 
   &-in-progress {
     @extend %label;
-    background-color: #EF4444;
-    color: #FFF;
+    background-color: #ef4444;
+    color: #fff;
   }
 
   &-done {
     @extend %label;
-    background-color: #12B981;
-    color: #FFF;
+    background-color: #12b981;
+    color: #fff;
   }
 }
 

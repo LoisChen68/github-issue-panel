@@ -5,8 +5,8 @@
   min-width: 150px;
   gap: 20px;
   position: absolute;
-  background-color: #FFF;
-  border: 1px solid #EEF0F3;
+  background-color: #fff;
+  border: 1px solid #eef0f3;
   border-radius: 5px;
 }
 
@@ -22,27 +22,25 @@
     right: 0%;
     top: 100%;
   }
-
 }
 
 .li {
-
   &-open,
   &-edit {
     cursor: pointer;
     display: flex;
-    color: #A5AAB2;
+    color: #a5aab2;
   }
 
   &-in-progress,
   &-delete {
     cursor: pointer;
     display: flex;
-    color: #EF4444;
+    color: #ef4444;
   }
 
   &-done {
     cursor: pointer;
-    color: #12B981;
+    color: #12b981;
   }
 }

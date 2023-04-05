@@ -6,10 +6,14 @@ interface SearchProps {
 }
 
 export default function Search({ value, onChange }: SearchProps) {
-
   return (
     <>
-      <input value={value} onChange={onChange} placeholder={'search'} className={style.input} />
+      <input
+        value={value}
+        onChange={onChange}
+        placeholder={'search'}
+        className={style.input}
+      />
     </>
   )
 }

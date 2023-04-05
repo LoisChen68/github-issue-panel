@@ -7,7 +7,6 @@ import Layout from '@/Layout/Layout'
 import UserDataContextProvider from '@/contexts/UserContext'
 
 export default function App({ Component, pageProps }: AppProps) {
-
   return (
     <ModalContextProvider>
       <UserDataContextProvider>

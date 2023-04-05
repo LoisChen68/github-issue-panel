@@ -11,16 +11,18 @@ export default function Layout() {
     router.push('/')
   }
 
-  return <>
-    <div className={style['nav-bar-wrapper']}>
-      <div className={style['nav-bar-container']}>
-        {userData?.userData.login !== '' &&
-          <>
-            <Link href='/panel'>Issues</Link>
-            <button onClick={handleLogoutClick}>Log Out</button>
-          </>
-        }
+  return (
+    <>
+      <div className={style['nav-bar-wrapper']}>
+        <div className={style['nav-bar-container']}>
+          {userData?.userData.login !== '' && (
+            <>
+              <Link href="/panel">Issues</Link>
+              <button onClick={handleLogoutClick}>Log Out</button>
+            </>
+          )}
+        </div>
       </div>
-    </div>
-  </>
+    </>
+  )
 }

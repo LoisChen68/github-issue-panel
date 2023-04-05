@@ -15,7 +15,14 @@ interface ModalProps {
 
 const githubUrl = 'https://api.github.com'
 
-export default function Modal({ onCloseClick, owner, repo, issue_number, title, body }: ModalProps) {
+export default function Modal({
+  onCloseClick,
+  owner,
+  repo,
+  issue_number,
+  title,
+  body
+}: ModalProps) {
   const token = localStorage.getItem('token')
   const [titleText, setTitleText] = useState(title)
   const [bodyText, setBodyText] = useState(body)
@@ -23,16 +30,19 @@ export default function Modal({ onCloseClick, owner, repo, issue_number, title, 
 
   const handleSaveClick = () => {
     try {
-      axios.patch(`${githubUrl}/repos/${owner}/${repo}/issues/${issue_number}`, {
-        title: titleText,
-        body: bodyText
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
+      axios.patch(
+        `${githubUrl}/repos/${owner}/${repo}/issues/${issue_number}`,
+        {
+          title: titleText,
+          body: bodyText
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
-      })
-    }
-    catch (e) {
+      )
+    } catch (e) {
       console.log(e)
     }
     modalState?.handleSetModal('')
@@ -48,9 +58,11 @@ export default function Modal({ onCloseClick, owner, repo, issue_number, title, 
 
   return (
     <>
-      <div className={style.wrapper} >
+      <div className={style.wrapper}>
         <div className={style.container}>
-          <span className={style.close} onClick={onCloseClick}><IoMdClose /></span>
+          <span className={style.close} onClick={onCloseClick}>
+            <IoMdClose />
+          </span>
           <input
             defaultValue={titleText}
             onChange={(e) => handleTitleChange(e)}
@@ -58,11 +70,15 @@ export default function Modal({ onCloseClick, owner, repo, issue_number, title, 
           <textarea
             defaultValue={bodyText}
             rows={10}
-            onChange={(e) => handleBodyChange(e)} />
+            onChange={(e) => handleBodyChange(e)}
+          />
           <button onClick={handleSaveClick}>Save</button>
         </div>
       </div>
-      <div className={style.backdrop} onClick={() => modalState?.handleSetModal('')} />
+      <div
+        className={style.backdrop}
+        onClick={() => modalState?.handleSetModal('')}
+      />
     </>
   )
 }

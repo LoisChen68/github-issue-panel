@@ -1,5 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import axios from 'axios';
+import axios from 'axios'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function handle(
@@ -13,9 +13,9 @@ export default async function handle(
     {},
     {
       headers: {
-        Accept: 'application/json',
-      },
-    },
-  );
+        Accept: 'application/json'
+      }
+    }
+  )
   res.status(200).json(data)
 }

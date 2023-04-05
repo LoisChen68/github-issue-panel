@@ -1,6 +1,6 @@
-import axios from "axios";
-import router from "next/router";
-import { createContext, useContext, useState } from "react";
+import axios from 'axios'
+import router from 'next/router'
+import { createContext, useContext, useState } from 'react'
 
 interface UserDataContextData {
   fetchUser: (token: string) => void
@@ -11,11 +11,15 @@ interface UserData {
   login: string
 }
 
-const userDataContext = createContext<UserDataContextData | undefined>(undefined)
+const userDataContext = createContext<UserDataContextData | undefined>(
+  undefined
+)
 
 const githubUrl = 'https://api.github.com'
 
-export default function UserDataContextProvider({ children }: {
+export default function UserDataContextProvider({
+  children
+}: {
   children: React.ReactNode
 }) {
   const [userData, setUserData] = useState<UserData>({ login: '' })
@@ -28,8 +32,7 @@ export default function UserDataContextProvider({ children }: {
         }
       })
       setUserData(data)
-    }
-    catch (e) {
+    } catch (e) {
       console.log(e)
       router.push('/')
     }
