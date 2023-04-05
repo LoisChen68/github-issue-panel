@@ -59,7 +59,8 @@
 
 .label {
 
-  &-open {
+  &-open,
+  &-no-label {
     @extend %label;
   }
 

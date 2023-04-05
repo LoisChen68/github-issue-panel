@@ -77,8 +77,10 @@ export default function Panel() {
         console.log(e)
       }
     }
+    if (userData?.userData.login === '') {
+      userData?.fetchUser(token)
+    }
 
-    userData?.fetchUser(token)
     fetchIssues()
   }, [userData])
 
@@ -225,7 +227,7 @@ export default function Panel() {
               label={
                 issue.labels.find(item => item.name === 'Done') && 'Done' ||
                 issue.labels.find(item => item.name === 'In Progress') && 'In Progress' ||
-                issue.labels.find(item => item.name === 'Open') && 'Open' || 'Open'
+                issue.labels.find(item => item.name === 'Open') && 'Open' || 'No Label'
               }
               owner={issue.repository?.owner?.login}
               repo={issue.repository?.name}
@@ -244,7 +246,7 @@ export default function Panel() {
               label={
                 issue.labels.find(item => item.name === 'Done') && 'Done' ||
                 issue.labels.find(item => item.name === 'In Progress') && 'In Progress' ||
-                issue.labels.find(item => item.name === 'Open') && 'Open' || 'Open'
+                issue.labels.find(item => item.name === 'Open') && 'Open' || 'No Label'
               }
               owner={issue.repository.owner.login}
               repo={issue.repository.name}
@@ -272,7 +274,7 @@ export default function Panel() {
                 label={
                   issue.labels.find(item => item.name === 'Done') && 'Done' ||
                   issue.labels.find(item => item.name === 'In Progress') && 'In Progress' ||
-                  issue.labels.find(item => item.name === 'Open') && 'Open' || 'Open'
+                  issue.labels.find(item => item.name === 'Open') && 'Open' || 'No Label'
                 }
                 owner={issue.repository.owner.login}
                 repo={issue.repository.name}
