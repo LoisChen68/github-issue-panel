@@ -2,10 +2,10 @@ import Card from "@/components/Card/Card"
 import style from '../../styles/Panel.module.scss'
 import axios from "axios"
 import { useEffect, useState } from "react"
-import router from "next/router"
 import Search from "@/components/Search/Search"
 import { useModalState } from "@/contexts/ModalContext"
 import InfiniteScroll from "react-infinite-scroll-component"
+import { useUserData } from "@/contexts/UserContext"
 
 interface IssueData {
   id: number
@@ -46,37 +46,22 @@ const labelList = [
 const githubUrl = 'https://api.github.com'
 
 export default function Panel() {
-  const [userData, setUserData] = useState({ login: '' })
   const [issuesData, setIssuesData] = useState<Array<IssueData>>([])
+  const [searchIssues, setSearchIssues] = useState<Array<IssueData>>([])
+  const [filterIssues, setFilterIssues] = useState<Array<IssueData>>([])
   const [isLoading, setIsLoading] = useState(true)
   const [filter, setFilter] = useState(false)
+  const [sort, setSort] = useState('Newest')
   const [searchText, setSearchText] = useState<string>('')
   const [disPlaySearchText, setDisPlaySearchText] = useState('')
   const [targetLabel, setTargetLabel] = useState('')
-  const [searchIssues, setSearchIssues] = useState<Array<IssueData>>([])
-  const [filterIssues, setFilterIssues] = useState<Array<IssueData>>([])
-  const [sort, setSort] = useState('Newest')
   const [page, setPage] = useState(2)
   const [hasMore, setHasMore] = useState(true)
   const modalState = useModalState()
+  const userData = useUserData()
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-
-    const fetchUser = async () => {
-      try {
-        const { data } = await axios.get(`${githubUrl}/user`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
-        setUserData(data)
-      }
-      catch (e) {
-        console.log(e)
-        router.push('/')
-      }
-    }
+    const token = localStorage.getItem('token') || ''
 
     const fetchIssues = async () => {
       try {
@@ -93,9 +78,9 @@ export default function Panel() {
       }
     }
 
-    fetchUser()
+    userData?.fetchUser(token)
     fetchIssues()
-  }, [])
+  }, [userData])
 
   const getMoreIssues = async () => {
     const token = localStorage.getItem('token')
@@ -127,7 +112,7 @@ export default function Panel() {
     if (disPlaySearchText) {
       setFilter(false)
       setTargetLabel('')
-      const userName = userData.login
+      const userName = userData?.userData.login
       const searchIssues = async () => {
         try {
           const token = localStorage.getItem('token')
@@ -144,7 +129,7 @@ export default function Panel() {
       }
       searchIssues()
     }
-  }, [disPlaySearchText, userData.login])
+  }, [disPlaySearchText, userData?.userData.login])
 
   const handleLabelTagClick = (label: string) => {
     setSearchText('')
@@ -217,7 +202,7 @@ export default function Panel() {
   return (
     <div onClick={handleBodyClick}>
       <div className={style['user-name-search-group']}>
-        <h1 className={style['user-name']}>{userData.login}</h1>
+        <h1 className={style['user-name']}>{userData?.userData.login}</h1>
         <Search value={searchText} onChange={handleSearchChange} />
         <div className={style['label-tags-sort-group']}>
           <ul className={style.labels}>

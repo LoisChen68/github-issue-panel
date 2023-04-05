@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import style from '../styles/Home.module.scss'
 
 function HomePage() {
