@@ -165,6 +165,9 @@ export default function Panel() {
     modalState?.modalState !== ''
       ? modalState?.handleSetModal('')
       : modalState?.modalState
+    modalState?.menuState.menu !== ''
+      ? modalState?.handleSetMenu(0, '')
+      : modalState?.menuState
   }
 
   return (

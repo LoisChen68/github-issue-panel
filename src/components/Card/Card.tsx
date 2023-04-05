@@ -31,14 +31,14 @@ const featureList = [
 const githubUrl = 'https://api.github.com'
 
 export default function Card({ owner, repo, issue_number, label, title, body, imgUrl }: CardProps) {
-  const [labelMenu, setLabelMenu] = useState(false)
-  const [dotMenu, setDotMenu] = useState(false)
   const [changeLabel, setChangeLabel] = useState<string>()
   const token = localStorage.getItem('token')
   const modalState = useModalState()
 
-  const handleLabelClick = () => {
-    !labelMenu ? setLabelMenu(true) : setLabelMenu(false)
+  const handleLabelClick = (id: number, menu: string) => {
+    modalState?.menuState.menu === 'label'
+      ? modalState?.handleSetMenu(0, '')
+      : modalState?.handleSetMenu(id, menu)
   }
 
   const handleLabelMenuItemClick = (label: string) => {
@@ -50,7 +50,7 @@ export default function Card({ owner, repo, issue_number, label, title, body, im
           'Authorization': `Bearer ${token}`
         }
       })
-      setLabelMenu(false)
+      modalState?.handleSetMenu(0, '')
       setChangeLabel(label)
     }
     catch (e) {
@@ -58,8 +58,10 @@ export default function Card({ owner, repo, issue_number, label, title, body, im
     }
   }
 
-  const handleDotClick = () => {
-    !dotMenu ? setDotMenu(true) : setDotMenu(false)
+  const handleDotClick = (id: number, menu: string) => {
+    modalState?.menuState.menu === 'dot'
+      ? modalState?.handleSetMenu(0, '')
+      : modalState?.handleSetMenu(id, menu)
   }
 
   const handleDotMenuItemClick = (feature: string) => {
@@ -80,7 +82,7 @@ export default function Card({ owner, repo, issue_number, label, title, body, im
     if (feature === 'Edit') {
       modalState?.handleSetModal('edit')
     }
-    setDotMenu(false)
+    modalState?.handleSetMenu(0, '')
   }
 
   const handleCloseClick = () => {
@@ -93,20 +95,20 @@ export default function Card({ owner, repo, issue_number, label, title, body, im
         <div className={style['label-dot-icon-group']}>
           <div className={style['label-menu-group']}>
             {changeLabel
-              ? <div className={style[`label-${changeLabel.toLocaleLowerCase().replace(' ', '-')}`]} onClick={handleLabelClick}>
+              ? <div className={style[`label-${changeLabel.toLocaleLowerCase().replace(' ', '-')}`]} onClick={() => handleLabelClick(issue_number, 'label')}>
                 {changeLabel}
               </div>
-              : <div className={style[`label-${label.toLocaleLowerCase().replace(' ', '-')}`]} onClick={handleLabelClick}>
+              : <div className={style[`label-${label.toLocaleLowerCase().replace(' ', '-')}`]} onClick={() => handleLabelClick(issue_number, 'label')}>
                 {label}
               </div>
             }
-            {labelMenu && <Menu menuName='label' menuList={labelList} onMenuItemClick={handleLabelMenuItemClick} />}
+            {modalState?.menuState.id === issue_number && modalState?.menuState.menu === 'label' && <Menu menuName='label' menuList={labelList} onMenuItemClick={handleLabelMenuItemClick} />}
           </div>
           <div className={style['dot-menu-group']}>
-            <div className={style['dot-icon']} onClick={handleDotClick}>
+            <div className={style['dot-icon']} onClick={() => handleDotClick(issue_number, 'dot')}>
               <BiDotsVertical />
             </div>
-            {dotMenu && <Menu menuName='feature' menuList={featureList} onMenuItemClick={handleDotMenuItemClick} />}
+            {modalState?.menuState.id === issue_number && modalState?.menuState.menu === 'dot' && <Menu menuName='feature' menuList={featureList} onMenuItemClick={handleDotMenuItemClick} />}
           </div>
         </div>
         <div className={style['avatar-title-group']}>
