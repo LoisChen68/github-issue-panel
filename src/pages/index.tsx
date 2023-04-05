@@ -1,8 +1,8 @@
 import style from '../styles/Home.module.scss'
 
-function HomePage() {
+export default function Home() {
   const handleLoginClick = () => {
-    window.location.href = `https://github.com/login/oauth/authorize?scope=public_repo&client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID}`
+    window.location.href = `https://github.com/login/oauth/authorize?scope=repo&client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID}`
   }
 
 
@@ -15,5 +15,3 @@ function HomePage() {
     </div>
   )
 }
-
-export default HomePage

@@ -1,6 +1,6 @@
 import '@/styles/globals.scss'
 import '@/styles/reset.scss'
-import style from '@/styles/Layout.module.scss'
+import style from '@/styles/App.module.scss'
 import type { AppProps } from 'next/app'
 import ModalContextProvider from '@/contexts/ModalContext'
 import Layout from '@/Layout/Layout'
