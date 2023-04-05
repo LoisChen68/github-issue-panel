@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import router from "next/router"
 import Search from "@/components/Search/Search"
 import { useModalState } from "@/contexts/ModalContext"
+import InfiniteScroll from "react-infinite-scroll-component"
 
 interface IssueData {
   id: number
@@ -55,6 +56,8 @@ export default function Panel() {
   const [searchIssues, setSearchIssues] = useState<Array<IssueData>>([])
   const [filterIssues, setFilterIssues] = useState<Array<IssueData>>([])
   const [sort, setSort] = useState('Newest')
+  const [page, setPage] = useState(2)
+  const [hasMore, setHasMore] = useState(true)
   const modalState = useModalState()
 
   useEffect(() => {
@@ -77,7 +80,7 @@ export default function Panel() {
 
     const fetchIssues = async () => {
       try {
-        const { data } = await axios.get(`${githubUrl}/issues`, {
+        const { data } = await axios.get(`${githubUrl}/issues?page=1&per_page=10`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -89,9 +92,27 @@ export default function Panel() {
         console.log(e)
       }
     }
+
     fetchUser()
     fetchIssues()
   }, [])
+
+  const getMoreIssues = async () => {
+    const token = localStorage.getItem('token')
+    try {
+      const { data } = await axios.get(`${githubUrl}/issues?page=${page}&per_page=10`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      setIssuesData(issuesData.concat(data))
+      if (data.length === 0) setHasMore(false)
+      setPage(page => page + 1)
+    }
+    catch (e) {
+      console.log(e)
+    }
+  }
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value)
@@ -104,6 +125,8 @@ export default function Panel() {
 
   useEffect(() => {
     if (disPlaySearchText) {
+      setFilter(false)
+      setTargetLabel('')
       const userName = userData.login
       const searchIssues = async () => {
         try {
@@ -125,6 +148,7 @@ export default function Panel() {
 
   const handleLabelTagClick = (label: string) => {
     setSearchText('')
+    setSearchIssues([])
     if (label === 'All') {
       setTargetLabel('')
       setFilterIssues([])
@@ -140,29 +164,49 @@ export default function Panel() {
   const handleSortClick = () => {
     if (sort === 'Oldest') {
       setSort('Newest')
-      const sortIssues = issuesData.sort((a: IssueData, b: IssueData) => {
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      })
-      const sortFilterIssue = filterIssues.sort((a: IssueData, b: IssueData) => {
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      })
-      setIssuesData(sortIssues)
-      setFilterIssues(sortFilterIssue)
+      if (!filter && searchIssues.length === 0) {
+        const sortIssues = issuesData.sort((a: IssueData, b: IssueData) => {
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        })
+        setIssuesData(sortIssues)
+      }
+      if (filter) {
+        const sortFilterIssue = filterIssues.sort((a: IssueData, b: IssueData) => {
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        })
+        setFilterIssues(sortFilterIssue)
+      }
+      if (searchIssues) {
+        const sortSearchIssue = searchIssues.sort((a: IssueData, b: IssueData) => {
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        })
+        setSearchIssues(sortSearchIssue)
+      }
     } else if (sort === 'Newest') {
       setSort('Oldest')
-      const sortIssues = issuesData.sort((a: IssueData, b: IssueData) => {
-        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-      })
-      const sortFilterIssue = filterIssues.sort((a: IssueData, b: IssueData) => {
-        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-      })
-      setIssuesData(sortIssues)
-      setFilterIssues(sortFilterIssue)
+      if (!filter && searchIssues.length === 0) {
+        const sortIssues = issuesData.sort((a: IssueData, b: IssueData) => {
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        })
+        setIssuesData(sortIssues)
+      }
+      if (filter) {
+        const sortFilterIssue = filterIssues.sort((a: IssueData, b: IssueData) => {
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        })
+        setFilterIssues(sortFilterIssue)
+      }
+      if (searchIssues) {
+        const sortSearchIssue = searchIssues.sort((a: IssueData, b: IssueData) => {
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        })
+        setSearchIssues(sortSearchIssue)
+      }
     }
   }
 
   const handleBodyClick = () => {
-    modalState?.modalState !== ''
+    modalState?.modalState !== '' && modalState?.modalState !== 'edit'
       ? modalState?.handleSetModal('')
       : modalState?.modalState
     modalState?.menuState.menu !== ''
@@ -209,7 +253,7 @@ export default function Panel() {
         )}
       {filter && filterIssues.length === 0
         ? <p className={style['no-issues-text']}>查無結果</p>
-        : filterIssues.map(issue =>
+        : filter && filterIssues.map(issue =>
           <div key={issue.id}>
             <Card
               label={
@@ -227,27 +271,35 @@ export default function Panel() {
           </div>
         )
       }
-      {issuesData.length === 0 && !isLoading && !filter && searchText.length === 0
-        ? <p className={style['no-issues-text']}>這裡風平浪靜! 目前沒有 Issue</p>
-        : !isLoading && !filter && searchText.length === 0 &&
-        issuesData.map(issue => (
-          <div key={issue.id}>
-            <Card
-              label={
-                issue.labels.find(item => item.name === 'Done') && 'Done' ||
-                issue.labels.find(item => item.name === 'In Progress') && 'In Progress' ||
-                issue.labels.find(item => item.name === 'Open') && 'Open' || 'Open'
-              }
-              owner={issue.repository.owner.login}
-              repo={issue.repository.name}
-              issue_number={issue.number}
-              title={issue.title}
-              body={issue.body}
-              imgUrl={issue.user.avatar_url}
-            />
-          </div>
-        ))
-      }
-    </div>
+      <InfiniteScroll
+        dataLength={issuesData.length}
+        next={getMoreIssues}
+        hasMore={hasMore}
+        loader={<p>Loading</p>}
+        style={{ width: "100%", overflow: "inherit" }}
+      >
+        {issuesData.length === 0 && !isLoading && !filter && searchText.length === 0
+          ? <p className={style['no-issues-text']}>這裡風平浪靜! 目前沒有 Issue</p>
+          : !isLoading && !filter && searchText.length === 0 &&
+          issuesData.map(issue => (
+            <div key={issue.id}>
+              <Card
+                label={
+                  issue.labels.find(item => item.name === 'Done') && 'Done' ||
+                  issue.labels.find(item => item.name === 'In Progress') && 'In Progress' ||
+                  issue.labels.find(item => item.name === 'Open') && 'Open' || 'Open'
+                }
+                owner={issue.repository.owner.login}
+                repo={issue.repository.name}
+                issue_number={issue.number}
+                title={issue.title}
+                body={issue.body}
+                imgUrl={issue.user.avatar_url}
+              />
+            </div>
+          ))
+        }
+      </InfiniteScroll >
+    </div >
   )
 }

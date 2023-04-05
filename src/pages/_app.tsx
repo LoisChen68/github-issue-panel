@@ -14,16 +14,14 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <ModalContextProvider>
-      <div className={style.wrapper} >
-        <div className={style['nav-bar-wrapper']}>
-          <div className={style['nav-bar-container']}>
-            <span>Navbar</span>
-            <button onClick={handleLogoutClick}>Log Out</button>
-          </div>
+      <div className={style['nav-bar-wrapper']}>
+        <div className={style['nav-bar-container']}>
+          <span>Navbar</span>
+          <button onClick={handleLogoutClick}>Log Out</button>
         </div>
-        <div className={style.container}>
-          <Component {...pageProps} />
-        </div>
+      </div>
+      <div className={style.container}>
+        <Component {...pageProps} />
       </div>
     </ModalContextProvider>
   )

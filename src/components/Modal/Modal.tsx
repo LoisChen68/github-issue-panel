@@ -48,7 +48,7 @@ export default function Modal({ onCloseClick, owner, repo, issue_number, title, 
 
   return (
     <>
-      <div className={style.wrapper}>
+      <div className={style.wrapper} >
         <div className={style.container}>
           <span className={style.close} onClick={onCloseClick}><IoMdClose /></span>
           <input
@@ -62,7 +62,7 @@ export default function Modal({ onCloseClick, owner, repo, issue_number, title, 
           <button onClick={handleSaveClick}>Save</button>
         </div>
       </div>
-      <div className={style.backdrop} />
+      <div className={style.backdrop} onClick={() => modalState?.handleSetModal('')} />
     </>
   )
 }
