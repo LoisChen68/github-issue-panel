@@ -116,6 +116,7 @@ export default function Card({ owner, repo, issue_number, label, title, body, im
           <p className={style.title}>{title}</p>
         </div>
         <p className={style.body}>{body}</p>
+        <p>Repo: {repo}</p>
       </div>
       {modalState?.modalState === 'edit' &&
         <Modal
